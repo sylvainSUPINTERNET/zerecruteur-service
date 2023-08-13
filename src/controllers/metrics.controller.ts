@@ -7,7 +7,7 @@ const { firestore } = loadConfiguration();
 
 export const metricsController = Router();
 
-metricsController.get('/metrics', async ( req:Request, res:Response, next:NextFunction ) => {
+metricsController.post('/metrics', async ( req:Request, res:Response, next:NextFunction ) => {
 
     await metricsService.saveMetrics(firestore, {
         req,

@@ -13,13 +13,15 @@
   "license": "ISC",
   "dependencies": {
     "@firebase/firestore": "^4.1.0",
+    "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "firebase": "^10.1.0",
     "request-ip": "^3.3.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "winston": "^3.10.0"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.3",
