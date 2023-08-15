@@ -1,4 +1,4 @@
-import {  Firestore, doc, setDoc, collection, addDoc, updateDoc, DocumentData, DocumentReference,getDoc  } from "firebase/firestore";
+import {  Firestore, doc, setDoc, collection, addDoc, updateDoc, DocumentData, DocumentReference,getDoc, FieldValue, DocumentSnapshot  } from "firebase/firestore";
 
 import { v4 as uuidv4 } from 'uuid';
 import { Request, Response, NextFunction} from "express";
@@ -40,12 +40,21 @@ const upsertMetrics = async ( cookies: Record<string, any>, req:Request, res:Res
             // Check if entry in database exists for this uuid
             const id = cookies[req.body.applicationId].split(",")[0];
 
-            const docSnapshot = await getDoc(doc(firestore, "users", `${id}`));
+            const docSnapshot:DocumentSnapshot = await getDoc(doc(firestore, "users", `${id}`));
+
             if (docSnapshot.exists()) {
+
+                // TODO => 
+                // il faut utiliser dans setDoc l'option "merge" et mettre uniquement les champs qu'on a bnesoin à jour 
+                // await setDoc(washingtonRef, {
+                //   population: FieldValue.increment(50)
+                // }, { merge: true });
+
                 // update
                 LOG.info("Update entry : " + id);
-                const { pathsVisited } = docSnapshot.data();
+                const { pathsVisited } = docSnapshot.data(); 
                 
+
                 await setDoc(doc(firestore, "users",`${id}` ), {
                     "updatedAt": new Date().toISOString(),
                     "pathsVisited": {
@@ -53,7 +62,7 @@ const upsertMetrics = async ( cookies: Record<string, any>, req:Request, res:Res
                         [`${req.body.fromUrl}`]: [...req.body.elements as Array<ElementPayload>]
                     }
                 });
-
+                
                 return id;
 
             } else {
