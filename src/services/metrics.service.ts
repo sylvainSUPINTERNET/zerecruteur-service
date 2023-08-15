@@ -15,10 +15,12 @@ export interface IMetricsServicePayload {
 export interface ElementPayload {
     id: string,
     htmlTag: string,
-    action: {
-        name: string,
-        count: number
-    }
+    actions: [
+        {
+            name: string,
+            count: number
+        }
+    ]
 }
 
 /**

@@ -11,7 +11,12 @@ import { logger } from './configuration/logger';
 const PORT:number = 9000;
 const app = express();
 
-app.use(cors());
+
+
+app.use(cors({
+    origin: 'http://localhost:3000', // TODO : Change this to the actual domain
+    credentials: true
+}));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }))
