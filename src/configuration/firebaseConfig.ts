@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "@firebase/firestore";
+import Stripe from 'stripe';
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -25,3 +26,8 @@ export const loadConfiguration = () => {
         firestore: getFirestore(app)
     }
 } 
+
+
+export const loadStripe = () => {
+  return new Stripe(process.env.STRIPE_SECRET_KEY as string, {apiVersion: '2023-08-16'});
+}
