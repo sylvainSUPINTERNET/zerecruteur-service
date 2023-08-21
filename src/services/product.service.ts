@@ -1,10 +1,6 @@
 import { Request, Response, NextFunction, Router } from "express";
 import { loadStripe } from "../configuration/firebaseConfig";
 
-
-
-
-
 export const addProduct = async (firestore:any, reqObj:any) => {
     const stripe = loadStripe();
     
