@@ -3,7 +3,6 @@ dotenv.config();
 import express from "express";
 import cors from "cors"
 import cookieParser from "cookie-parser";
-import bodyParser from "body-parser";
 import { logger } from './configuration/logger';
 import { productController } from './controllers/product.controller';
 import { webhookController } from './controllers/webhook.controller';
@@ -19,22 +18,11 @@ app.use(cors({
     credentials: true
 }));
 
+// can't use body parser due to stripe webhook using raw body ! ( tested with verify method, is not working !)
+
 app.use(cookieParser());
-app.use(bodyParser.json({
-    // Because Stripe needs the raw body, we compute it but only when hitting the Stripe callback URL.
-    verify: function(req:any,res:any,buf) {
-        console.log("verify");
-        const url = req.originalUrl;
-        if (url.startsWith(webhookEndpoint)) {
-            req.rawBody = buf.toString()
-        }
-    }}));
-app.use(bodyParser.urlencoded({ extended: false }));
-
-
-// app.use('/api', metricsController);
-app.use('/api', productController )
-app.use(webhookEndpoint, webhookController)
+app.use('/api', express.json(), productController )
+app.use(webhookEndpoint, express.raw({type: 'application/json'}), webhookController)
  
  
 app.listen(PORT, () => {

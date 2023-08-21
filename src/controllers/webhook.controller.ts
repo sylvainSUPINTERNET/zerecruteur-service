@@ -1,4 +1,4 @@
-import express, { Router, Request, Response, NextFunction } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { loadStripe } from "../configuration/firebaseConfig";
 const stripe = loadStripe();
 
