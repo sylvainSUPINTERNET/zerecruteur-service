@@ -11,6 +11,11 @@ webhookController.post('/', async ( req:Request, res:Response, _next:NextFunctio
     try {
         event = stripe.webhooks.constructEvent(req.body, sig!, process.env.WHSEC!);
         console.log(event.type);
+        console.log(event);
+        console.log("====================================")
+        console.log("====================================")
+        console.log("====================================")
+        console.log("====================================")
 
         res.status(200).json({
             "response":"webhook success"
