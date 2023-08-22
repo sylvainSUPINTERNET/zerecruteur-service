@@ -10,12 +10,24 @@ webhookController.post('/', async ( req:Request, res:Response, _next:NextFunctio
 
     try {
         event = stripe.webhooks.constructEvent(req.body, sig!, process.env.WHSEC!);
-        console.log(event.type);
-        console.log(event);
-        console.log("====================================")
-        console.log("====================================")
-        console.log("====================================")
-        console.log("====================================")
+
+        switch ( event.type ) {
+            case 'charge.succeeded':
+                const chargeData:any = event.data.object;
+
+                const pi:any = (await stripe.charges.retrieve(chargeData.id)).payment_intent;
+                console.log("now<ay")
+                const paymentIntent = await stripe.paymentIntents.retrieve(pi);
+                console.log(paymentIntent);
+                console.log("DAMN")
+                break;
+            default:
+                // No action planned for this event
+                break;
+        }
+
+
+
 
         res.status(200).json({
             "response":"webhook success"
