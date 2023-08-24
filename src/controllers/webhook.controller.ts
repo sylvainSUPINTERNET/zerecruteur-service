@@ -14,13 +14,24 @@ webhookController.post('/', async ( req:Request, res:Response, _next:NextFunctio
         switch ( event.type ) {
             case 'charge.succeeded':
                 const chargeData:any = event.data.object;
-
+            
                 const pi:any = (await stripe.charges.retrieve(chargeData.id)).payment_intent;
                 console.log("now<ay")
                 const paymentIntent = await stripe.paymentIntents.retrieve(pi);
                 console.log(paymentIntent);
                 console.log("DAMN")
                 break;
+            case 'checkout.session.completed':
+                console.log("session completed");
+                const sessionData:any = event.data.object;
+
+                if ( sessionData.payment_status === 'paid' ) {
+                    
+                    console.log(sessionData)
+                    console.log("=========================================")
+                }
+                
+
             default:
                 // No action planned for this event
                 break;
