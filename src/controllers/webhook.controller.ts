@@ -32,11 +32,18 @@ webhookController.post('/', async ( req:Request, res:Response, _next:NextFunctio
                         // Récupérer les line_items associés à cette session
                         const lineItems = await stripe.checkout.sessions.listLineItems(sessionData.id);
 
-                        lineItems.data.forEach(item => {
-                            console.log(`Produit: ${item.description}, Quantité: ${item.quantity}`);
-                        });
 
-                        console.log("=========================================")
+                        for ( const item of lineItems.data ) {
+                            console.log("lineItem", item);
+                            const {price} = item;                            
+                            const productDetail = await stripe.products.retrieve(
+                                price?.product as string
+                              );
+                            console.log("== product detail ==", productDetail)
+                        }
+
+                        //TODO
+                        console.log("TODO => relation avec le produit creer par l'utilisateur et la vente réalisé")
                 }
 
             default:
