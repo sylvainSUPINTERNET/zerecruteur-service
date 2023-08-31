@@ -5,6 +5,7 @@ const stripe = loadStripe();
 export const webhookController = Router();
 
 webhookController.post('/', async ( req:Request, res:Response, _next:NextFunction ) => {
+    
     const sig = req.headers['stripe-signature'];
     let event;
 
