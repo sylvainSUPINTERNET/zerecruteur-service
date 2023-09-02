@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction, Router } from "express";
 import { loadStripe } from "../configuration/firebaseConfig";
+import { prisma as dbClient } from "../prismaClient/prismaClientGenerated";
+
+
 
 export const addProduct = async (firestore:any, reqObj:any) => {
     const stripe = loadStripe();
-    
-    // TODO
-    // upload file to S3
 
     const product = await stripe.products.create({
         name: reqObj.req.body.name,
@@ -66,13 +66,41 @@ export const addProduct = async (firestore:any, reqObj:any) => {
     });
 
 
-    // TODO : 
-    // Il faut rajouter un webhook pour ecouter les payment par la suite 
-    // envoyer une facture quand on reçoit un payment 
-    // il faut un mail pro + number pro (  apparait sur les invoices ) 
+    //TODO use real oauth2 user 
+    const user = await dbClient.user.findUnique({
+        where : {
+            email : "email@email.com"
+        }
+    });
+
+    if ( user ) {
+        console.log("go", user);
+
+        const paymentLinkDb = await dbClient.paymentLink.create({
+                data : {
+                    user : {
+                        connect : {
+                            id : user.id
+                        }
+                    }
+                }
+        });
+
+        const productDb = await dbClient.product.create({
+            data : {    
+                name: reqObj.req.body.name,
+                description: reqObj.req.body.description, 
+            }
+        });
+    }
 
     console.log("payment link", paymentLink.url);
     console.log("product " , product.id);
     console.log("price ", price.id)
+
+    // dbClient.price.create({});
+    // dbClient.product.create({});
+    // dbClient.paymentLink.create({});
+
     return product;
 }

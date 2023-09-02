@@ -7,7 +7,6 @@ import { logger } from './configuration/logger';
 import { productController } from './controllers/product.controller';
 import { webhookController } from './controllers/webhook.controller';
 
-
 const PORT:number = 9000;
 const app = express();
 
