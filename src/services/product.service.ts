@@ -74,7 +74,7 @@ export const addProduct = async (firestore:any, reqObj:any) => {
     });
 
     if ( user ) {
-        
+
         const paymentLinkDb = await dbClient.paymentLink.create({
                 data : {
                     user : {
@@ -90,6 +90,7 @@ export const addProduct = async (firestore:any, reqObj:any) => {
                 name: reqObj.req.body.name,
                 description: reqObj.req.body.description,
                 pictureUrl : product.images[0],
+                stripeId: product.id,
                 paymentLink: {
                     connect : {
                         id : paymentLinkDb.id
@@ -102,9 +103,10 @@ export const addProduct = async (firestore:any, reqObj:any) => {
             data : {
                 product : {
                     connect : {
-                        id : productDb.id
+                        id : productDb.id,
                     }
-                }
+                },
+                priceStripeId: price.id,
             }
         });
         console.log("save price to DB")
@@ -113,6 +115,8 @@ export const addProduct = async (firestore:any, reqObj:any) => {
     console.log("payment link", paymentLink.url);
     console.log("product " , product.id);
     console.log("price ", price.id)
+
+
 
     return product;
 }
