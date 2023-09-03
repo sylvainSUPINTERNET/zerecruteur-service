@@ -19,18 +19,12 @@ webhookController.post('/', async ( req:Request, res:Response, _next:NextFunctio
         switch ( event.type ) {
             case 'charge.succeeded':
                 const chargeData:any = event.data.object;
-                const pi:any = (await stripe.charges.retrieve(chargeData.id)).payment_intent;
-                console.log("now<ay")
-                const paymentIntent = await stripe.paymentIntents.retrieve(pi);
-                console.log(paymentIntent.metadata);
-                console.log("DAMN")
-
-                console.log(paymentIntent)
-                console.log("send receipt to : ", paymentIntent.receipt_email);
-                await stripe.paymentIntents.confirm(paymentIntent.id, {
-                    receipt_email: paymentIntent.receipt_email,
-                });
-
+                //const pi:any = (await stripe.charges.retrieve(chargeData.id)).payment_intent;
+                ///const paymentIntent = await stripe.paymentIntents.retrieve(pi);
+                
+                // email send automatically in live mode if configured
+                // https://dashboard.stripe.com/settings/emails
+            
                 break;
             case 'checkout.session.completed':
                 console.log("session completed");
