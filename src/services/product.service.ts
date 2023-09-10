@@ -3,8 +3,7 @@ import { loadStripe } from "../configuration/firebaseConfig";
 import { prisma as dbClient } from "../prismaClient/prismaClientGenerated";
 
 
-
-export const addProduct = async (firestore:any, reqObj:any) => {
+export const addProduct = async (reqObj:any) => {
     const stripe = loadStripe();
 
     const product = await stripe.products.create({

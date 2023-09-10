@@ -106,8 +106,6 @@ const upsertMetrics = async ( cookies: Record<string, any>, req:Request, res:Res
         res.clearCookie(req.body.applicationId);
         return null;
     }
-
-    return null;
 }
 
 
@@ -123,5 +121,4 @@ export const metricsService = {
 
         }
     }
-
 };
