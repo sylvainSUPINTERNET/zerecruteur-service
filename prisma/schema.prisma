@@ -19,6 +19,7 @@ model User {
 
 model PaymentLink {
   user User @relation(fields: [userId], references: [id])
+  identifier String @unique
   userId Int
   products Product[]
   id Int @id @default(autoincrement())

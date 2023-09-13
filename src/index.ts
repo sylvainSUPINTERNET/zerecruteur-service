@@ -7,6 +7,7 @@ import { logger } from './configuration/logger';
 import { productController } from './controllers/product.controller';
 import { webhookController } from './controllers/webhook.controller';
 import { paymentLinkController } from './controllers/paymentLink.controller';
+import { orderController } from './controllers/orders.controller';
 
 const PORT:number = 9000;
 const app = express();
@@ -23,6 +24,7 @@ app.use(cors({
 app.use(cookieParser());
 app.use('/api', express.json(), productController )
 app.use('/api', express.json(), paymentLinkController )
+app.use('/api', express.json(), orderController )
 app.use(webhookEndpoint, express.raw({type: 'application/json'}), webhookController)
  
  

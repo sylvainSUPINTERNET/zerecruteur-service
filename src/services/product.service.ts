@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, Router } from "express";
 import { loadStripe } from "../configuration/firebaseConfig";
 import { prisma as dbClient } from "../prismaClient/prismaClientGenerated";
-
+import { v4 as uuidv4 } from 'uuid';
 
 export const addProduct = async (reqObj:any) => {
     const stripe = loadStripe();
@@ -80,7 +80,8 @@ export const addProduct = async (reqObj:any) => {
                         connect : {
                             id : user.id
                         }
-                    }
+                    },
+                    identifier: uuidv4()
                 }
         });
 
@@ -105,7 +106,7 @@ export const addProduct = async (reqObj:any) => {
                         id : productDb.id,
                     }
                 },
-                priceStripeId: price.id,
+                priceStripeId: price.id
             }
         });
         console.log("save price to DB")
