@@ -5,21 +5,15 @@ interface OrderTotal {
     totalraw: number;
 }
 
+
+export const ordersList = async (reqObj:any) => {
+
+    // TODO implement cursor pagination
+}
+
 export const computeOrdersTotalAmount = async (reqObj:any) : Promise< string | null> => {
 
     // TODO user can retrieve ONLY his own orders ! 
-    
-    const specificPaymentLinkId = reqObj.req.query.paymentLink;
-
-    if ( !specificPaymentLinkId ||  specificPaymentLinkId == "") {
-        reqObj.res.status(400).json({
-            "response": {
-                "message": "Payment link not valid",
-                "data": []
-            }
-        });
-    }
-
     
     const result: OrderTotal[] = await dbClient.$queryRaw`
         SELECT SUM("Order"."amount" * "Order".quantity) as totalRaw
@@ -28,7 +22,7 @@ export const computeOrdersTotalAmount = async (reqObj:any) : Promise< string | n
         WHERE "ProductOrder"."productId" IN (
             SELECT "Product".id
             FROM "Product"
-            INNER JOIN "PaymentLink" ON "PaymentLink".identifier = ${specificPaymentLinkId}
+            INNER JOIN "PaymentLink" ON "PaymentLink".identifier = ${reqObj.req.query.paymentLink}
         );
     `;
 
@@ -36,9 +30,10 @@ export const computeOrdersTotalAmount = async (reqObj:any) : Promise< string | n
     try {
         const factor:number = parseFloat("100");
         const val:number = parseFloat(BigInt(result[0].totalraw).toString());
-        console.log( (val / factor))
         return (val / factor).toString();
     } catch (error) {
+
+        // TODO better logger !!!
         console.log(error)
         return null;
     }

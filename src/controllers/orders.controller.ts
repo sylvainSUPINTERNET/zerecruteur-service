@@ -4,6 +4,17 @@ import { computeOrdersTotalAmount } from "../services/orders.service";
 export const orderController = Router();
 
 orderController.get('/orders/total', async ( req, res, _next ) => {
+
+    const specificPaymentLinkId = req.query.paymentLink;
+
+    if ( !specificPaymentLinkId ||  specificPaymentLinkId == "") {
+        res.status(400).json({
+            "response": {
+                "message": "Payment link not valid",
+                "data": []
+            }
+        });
+    }
     
     const totalRawResult = await computeOrdersTotalAmount({req,res});
     
