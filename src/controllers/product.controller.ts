@@ -14,7 +14,7 @@ productController.post('/products', async ( req:Request, res:Response, _next:Nex
         res
     });
 
-    res.status(200).json({
+    return res.status(200).json({
         "response": {
             "message": "Product added successfully",
             "data": result.id

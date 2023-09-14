@@ -99,13 +99,13 @@ webhookController.post('/', async ( req:Request, res:Response, _next:NextFunctio
 
 
 
-        res.status(200).json({
+        return res.status(200).json({
             "response":"webhook success"
         });
 
       } catch (err:any) {
 
-        res.status(400).send(`Webhook Error: ${err.message}`);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
 
       }
     

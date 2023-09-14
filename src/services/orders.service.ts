@@ -5,10 +5,53 @@ interface OrderTotal {
     totalraw: number;
 }
 
+interface CountOrder {
+    count: number;
+}
 
-export const ordersList = async (reqObj:any) => {
+interface Order {
+    orderId: number;
+    productId: number;
+    quantity: number;
+    createdAt: Date;
+    amount: number;
+}
 
-    // TODO implement cursor pagination
+
+export const ordersCount = async ( reqObj: any ) => {
+
+    const resultCount: CountOrder[] = await dbClient.$queryRaw`
+            SELECT COUNT(*) as count
+            FROM "ProductOrder"
+            LEFT JOIN "Order" ON "Order".id = "ProductOrder"."orderId"
+            WHERE "ProductOrder"."productId" IN (
+                SELECT "Product".id
+                FROM "Product"
+                INNER JOIN "PaymentLink" ON "PaymentLink".identifier = ${reqObj.req.query.paymentLink}
+        ); 
+    `;
+    
+    return  BigInt(resultCount[0].count).toString();
+
+}
+
+
+// No cursor pagination ( not enough data, no need to implement it)
+// but use keySet pagination ( no OFFSET, using id as "offset") + LIMIT increase perf
+
+export const ordersList = async (reqObj:any, offset:number, size:number) => {
+
+    const orders: Order[] = await dbClient.$queryRaw`
+    SELECT "orderId", "Order".quantity, "Order"."createdAt", "Order".amount, "Order".currency, "productId"
+    FROM "ProductOrder"
+    LEFT JOIN "Order" ON "Order".id = "ProductOrder"."orderId"
+    WHERE "ProductOrder"."productId" IN (
+        SELECT "Product".id
+        FROM "Product"
+        INNER JOIN "PaymentLink" ON "PaymentLink".identifier = ${reqObj.req.query.paymentLink} ) AND "Order".id > ${offset} ORDER BY "createdAt" ASC LIMIT ${size};
+    `
+
+    return orders;
 }
 
 export const computeOrdersTotalAmount = async (reqObj:any) : Promise< string | null> => {
