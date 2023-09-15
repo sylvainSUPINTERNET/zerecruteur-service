@@ -42,13 +42,22 @@ export const ordersCount = async ( reqObj: any ) => {
 export const ordersList = async (reqObj:any, offset:number, size:number) => {
 
     const orders: Order[] = await dbClient.$queryRaw`
+    WITH RelevantProducts AS (
+    SELECT "Product".id
+    FROM "Product"
+        WHERE "Product".id IN (
+            SELECT "Product".id
+            FROM "Product"
+            INNER JOIN "PaymentLink" ON "Product"."paymentLinkId" = "PaymentLink".id
+            WHERE "PaymentLink".identifier = ${reqObj.req.query.paymentLink}
+        )
+    )
     SELECT "orderId", "Order".quantity, "Order"."createdAt", "Order".amount, "Order".currency, "productId"
     FROM "ProductOrder"
-    LEFT JOIN "Order" ON "Order".id = "ProductOrder"."orderId"
-    WHERE "ProductOrder"."productId" IN (
-        SELECT "Product".id
-        FROM "Product"
-        INNER JOIN "PaymentLink" ON "PaymentLink".identifier = ${reqObj.req.query.paymentLink} ) AND "Order".id > ${offset} ORDER BY "createdAt" ASC LIMIT ${size};
+    JOIN "Order" ON "Order".id = "ProductOrder"."orderId"
+    WHERE "ProductOrder"."productId" IN (SELECT id FROM RelevantProducts)
+    AND "Order".id > ${offset}
+    ORDER BY "createdAt" ASC LIMIT ${size};
     `
 
     return orders;

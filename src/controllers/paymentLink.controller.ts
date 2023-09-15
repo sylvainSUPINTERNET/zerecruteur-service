@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { addPaymentLink } from "../services/paymentLink.service";
+import { getPaymentLinks } from "../services/paymentLink.service";
 
 export const paymentLinkController = Router();
 
 paymentLinkController.post('/paymentLink', async ( req, res, _next ) => {
     
-    const userPaymentLinks = await addPaymentLink({req,res});
+    const userPaymentLinks = await getPaymentLinks({req,res});
 
     return res.status(200).json({
         "response": {
