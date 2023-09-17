@@ -81,7 +81,8 @@ export const addProduct = async (reqObj:any) => {
                             id : user.id
                         }
                     },
-                    identifier: uuidv4()
+                    identifier: uuidv4(),
+                    iban: reqObj.req.body.iban,
                 }
         });
 

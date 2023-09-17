@@ -22,6 +22,7 @@ model PaymentLink {
   identifier String @unique
   userId Int
   products Product[]
+  iban String
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
 }
