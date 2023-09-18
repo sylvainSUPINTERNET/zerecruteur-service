@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 export const addProduct = async (reqObj:any) => {
     const stripe = loadStripe();
 
+    reqObj.req.body.price = reqObj.req.body.price * 100;
+
     const product = await stripe.products.create({
         name: reqObj.req.body.name,
         description: reqObj.req.body.description,
@@ -15,12 +17,7 @@ export const addProduct = async (reqObj:any) => {
             subcategory: reqObj.req.body.subcategory,
             price: reqObj.req.body.price,
             currency: reqObj.req.body.currency,
-            quantity: reqObj.req.body.quantity,
-            sku: reqObj.req.body.sku,
-            brand: reqObj.req.body.brand,
-            color: reqObj.req.body.color,
-            size: reqObj.req.body.size,
-            material: reqObj.req.body.material,
+            quantity: reqObj.req.body.quantity
         }
     });
 
@@ -38,11 +35,11 @@ export const addProduct = async (reqObj:any) => {
         line_items: [
             {
                 price: price.id,
-                quantity: 1,
+                quantity: reqObj.req.body.quantity,
                 adjustable_quantity : {
                     enabled: true,
                     minimum: 1,
-                    maximum: 10
+                    maximum: 999
                 }
             }
         ],
@@ -59,6 +56,7 @@ export const addProduct = async (reqObj:any) => {
         after_completion : {
             type: 'hosted_confirmation',
             hosted_confirmation : {
+                // TODO use real email
                 custom_message: `Thank you for your order! We will email you with updates about your delivery ${mockEmail}`
             }
         }
@@ -73,7 +71,7 @@ export const addProduct = async (reqObj:any) => {
     });
 
     if ( user ) {
-
+        
         const paymentLinkDb = await dbClient.paymentLink.create({
                 data : {
                     user : {
@@ -83,6 +81,7 @@ export const addProduct = async (reqObj:any) => {
                     },
                     identifier: uuidv4(),
                     iban: reqObj.req.body.iban,
+                    paymentUrl: paymentLink.url
                 }
         });
 
