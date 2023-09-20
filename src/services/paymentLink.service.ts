@@ -10,7 +10,8 @@ export const getPaymentLinks = async (reqObj:any) : Promise<any[]> => {
             paymentLinks: {
                 select: {
                     id: true,
-                    identifier: true
+                    identifier: true,
+                    paymentUrl: true
                 }
             }
         }
