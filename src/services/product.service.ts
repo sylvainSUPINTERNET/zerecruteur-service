@@ -1,7 +1,34 @@
-import { Request, Response, NextFunction, Router } from "express";
 import { loadStripe } from "../configuration/firebaseConfig";
 import { prisma as dbClient } from "../prismaClient/prismaClientGenerated";
 import { v4 as uuidv4 } from 'uuid';
+
+
+export const productByPaymentLinkIdentifier = async (reqObj:any) => {
+
+    // TODO check validty 
+    const {identifier} : {identifier: string} = reqObj.req.body;
+    
+
+    const product = await dbClient.product.findFirst({
+        where : {
+            paymentLink : {
+                identifier
+            }
+        },
+        select: {
+            name: true,
+            stock: true
+        }
+    });
+ 
+
+    if ( product ) {
+        return product;
+    }
+
+    return null;
+
+}
 
 export const addProduct = async (reqObj:any) => {
     const stripe = loadStripe();
@@ -17,7 +44,6 @@ export const addProduct = async (reqObj:any) => {
             subcategory: reqObj.req.body.subcategory,
             price: reqObj.req.body.price,
             currency: reqObj.req.body.currency,
-            quantity: reqObj.req.body.quantity
         }
     });
 
@@ -29,13 +55,13 @@ export const addProduct = async (reqObj:any) => {
     });
 
 
-
+    // TODO use real email
     const mockEmail = "sylvain.jolyxxx@gmail.coim"
     const paymentLink = await stripe.paymentLinks.create({
         line_items: [
             {
                 price: price.id,
-                quantity: reqObj.req.body.quantity,
+                quantity: 1,
                 adjustable_quantity : {
                     enabled: true,
                     minimum: 1,
@@ -81,7 +107,8 @@ export const addProduct = async (reqObj:any) => {
                     },
                     identifier: uuidv4(),
                     iban: reqObj.req.body.iban,
-                    paymentUrl: paymentLink.url
+                    paymentUrl: paymentLink.url,
+                    stripeId: paymentLink.id
                 }
         });
 
@@ -95,11 +122,12 @@ export const addProduct = async (reqObj:any) => {
                     connect : {
                         id : paymentLinkDb.id
                    }
-                }
+                },
+                stock: parseInt(reqObj.req.body.quantity),
             }
         });
 
-        const priceDb = await dbClient.price.create({
+        await dbClient.price.create({
             data : {
                 product : {
                     connect : {

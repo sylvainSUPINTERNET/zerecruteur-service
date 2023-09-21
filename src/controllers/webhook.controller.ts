@@ -47,6 +47,34 @@ webhookController.post('/', async ( req:Request, res:Response, _next:NextFunctio
                             const productDb = await clientDb.product.findFirst({  
                                 where: {
                                     stripeId: productDetail.id
+                                },
+                                select: {
+                                    id: true,
+                                    stock: true,
+                                    paymentLink: {
+                                        select: {
+                                            stripeId:true
+                                        }
+                                    }
+                                }
+                            });
+                            
+                            if ( productDb!.stock - item.quantity! <= 0 ) {
+                                console.log(`Disable link : ${productDb!.paymentLink!.stripeId}, out of stock`)
+                                // disable link
+                                await stripe.paymentLinks.update(
+                                    productDb!.paymentLink!.stripeId,
+                                    {active: false}
+                                );
+                            }
+
+                            // Update stock
+                            await clientDb.product.update({
+                                where: {
+                                    id: productDb!.id
+                                },
+                                data: {
+                                    stock: productDb!.stock - item.quantity!
                                 }
                             });
 

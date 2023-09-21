@@ -23,6 +23,7 @@ model PaymentLink {
   userId Int
   products Product[]
   iban String
+  stripeId String
   paymentUrl String @default("https://pay.stripe.com/direct/ACn3JZ3Zq5Qq0QXfX2")
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -37,6 +38,7 @@ model Product {
   name String
   description String
   stripeId String
+  stock Int
   orders ProductOrder[]
   createdAt DateTime @default(now())
 }
