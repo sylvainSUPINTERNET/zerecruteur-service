@@ -29,8 +29,15 @@ webhookController.post('/', async ( req:Request, res:Response, _next:NextFunctio
             case 'checkout.session.completed':
                 console.log("session completed");
                 const sessionData:any = event.data.object;
-
+            
                 if (sessionData.payment_status === 'paid') {
+
+
+                    console.log("session data", sessionData);
+
+                    const {address, name} = sessionData.shipping_details;
+
+                    
                         // Récupérer les line_items associés à cette session
                         const lineItems = await stripe.checkout.sessions.listLineItems(sessionData.id);
 
