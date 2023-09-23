@@ -161,13 +161,17 @@ export const computeOrdersTotalAmount = async (reqObj:any) : Promise< string | n
     // TODO user can retrieve ONLY his own orders ! 
     
     const result: OrderTotal[] = await dbClient.$queryRaw`
-        SELECT SUM("Order"."amount" * "Order".quantity) as totalRaw
+     SELECT SUM("Order"."amount" * "Order".quantity) as totalRaw
         FROM "ProductOrder"
         LEFT JOIN "Order" ON "Order".id = "ProductOrder"."orderId"
         WHERE "ProductOrder"."productId" IN (
             SELECT "Product".id
             FROM "Product"
-            INNER JOIN "PaymentLink" ON "PaymentLink".identifier = ${reqObj.req.query.paymentLink}
+            WHERE "Product"."paymentLinkId" IN (
+                SELECT "PaymentLink".id
+                FROM "PaymentLink"
+                WHERE "PaymentLink".identifier = ${reqObj.req.query.paymentLink}
+            )
         );
     `;
 
