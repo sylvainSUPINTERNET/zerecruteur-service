@@ -67,6 +67,7 @@ model Order {
   shippingName String
   phoneNumber String?
   buyerEmail String
+  status String @default("pending")
 }
 
 model ProductOrder {

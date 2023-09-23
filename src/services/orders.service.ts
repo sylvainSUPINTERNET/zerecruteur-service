@@ -25,6 +25,7 @@ interface Order {
     phoneNumber: string;
     buyerEmail: string;
     productname: string;
+    status: "pending" | "shipped"
 }
 
 
@@ -103,6 +104,7 @@ export const ordersList = async (reqObj:any, offset:number, size:number) => {
             "Order"."shippingPostalCode",
             "Order"."phoneNumber",
             "Order"."buyerEmail",
+            "Order"."status",
             RelevantProducts.name AS productName -- ajout du nom du produit ici
         FROM "ProductOrder"
         JOIN "Order" ON "Order".id = "ProductOrder"."orderId"
