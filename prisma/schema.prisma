@@ -58,6 +58,15 @@ model Order {
   currency String
   productOrders ProductOrder[]
   createdAt DateTime @default(now())
+  shippingCity String
+  shippingCountry String
+  shippingLine1 String
+  shippingLine2 String?
+  shippingPostalCode String
+  shippingState String?
+  shippingName String
+  phoneNumber String?
+  buyerEmail String
 }
 
 model ProductOrder {

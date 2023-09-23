@@ -13,7 +13,7 @@ productController.post('/products/identifier', async ( req:Request, res:Response
     });
 
     if ( result === null ) {
-        return res.status(400).json({
+        return res.status(204).json({
             "response": {
                 "message": "Product not found",
                 "data": null

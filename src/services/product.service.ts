@@ -69,6 +69,8 @@ export const addProduct = async (reqObj:any) => {
                 }
             }
         ],
+
+        // TODO ?
         shipping_address_collection : {
             allowed_countries: ['FR', 'DE', 'IT', 'ES', 'GB']
         },

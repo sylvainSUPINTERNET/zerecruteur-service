@@ -35,9 +35,15 @@ webhookController.post('/', async ( req:Request, res:Response, _next:NextFunctio
 
                     console.log("session data", sessionData);
 
-                    const {address, name} = sessionData.shipping_details;
+                    const {address, name:nameShipping} = sessionData.shipping_details;
+                    const {city, country, line1, line2, postal_code, state} = address;
+                    const {email:buyerEmail, phone} = sessionData.customer_details;
 
+                    console.log("shipping details", sessionData.shipping_details);
+
+                    console.log("customer details", sessionData.customer_details)
                     
+
                         // Récupérer les line_items associés à cette session
                         const lineItems = await stripe.checkout.sessions.listLineItems(sessionData.id);
 
@@ -93,7 +99,16 @@ webhookController.post('/', async ( req:Request, res:Response, _next:NextFunctio
                                     data: {
                                             quantity: item.quantity!,
                                             amount: item.amount_total!,
-                                            currency: item.currency!
+                                            currency: item.currency!,
+                                            shippingCity: city,
+                                            shippingCountry: country,
+                                            shippingLine1: line1,
+                                            shippingLine2: line2 || "",
+                                            shippingName: nameShipping,
+                                            shippingState: state || "",
+                                            shippingPostalCode: postal_code,
+                                            phoneNumber: phone || "",
+                                            buyerEmail: buyerEmail
                                     }
                                 });
 
