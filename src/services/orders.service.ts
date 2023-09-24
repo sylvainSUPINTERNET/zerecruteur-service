@@ -110,7 +110,7 @@ export const ordersList = async (reqObj:any, offset:number, size:number) => {
         JOIN "Order" ON "Order".id = "ProductOrder"."orderId"
         JOIN RelevantProducts ON RelevantProducts.id = "ProductOrder"."productId" -- jointure avec RelevantProducts
         WHERE "ProductOrder"."productId" IN (SELECT id FROM RelevantProducts)
-        ORDER BY "createdAt" ASC
+        ORDER BY "createdAt" DESC
         LIMIT ${size} OFFSET ${offset};
 
     `
