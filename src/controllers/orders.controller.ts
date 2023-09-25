@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { computeOrdersTotalAmount, ordersCount, ordersList } from "../services/orders.service";
+import { computeOrdersTotalAmount, ordersCount, ordersList, updateOrdersStatus } from "../services/orders.service";
 
 export const orderController = Router();
 
@@ -91,7 +91,31 @@ orderController.get('/orders/total', async ( req, res, _next ) => {
         });
     
     }
-
-
 });
+
+orderController.put('/orders', async ( req, res, _next ) => {
+    
+    const orderIds = req.body.orderIds;
+
+    try {
+
+        const result = await updateOrdersStatus({req,res});
+        return res.status(200).json({
+            "response": {
+                "message": "Orders status updated successfully",
+                "data": orderIds
+            }   
+        });
+
+    } catch ( e ) {
+        return res.status(400).json({   
+            "response": {
+                "message": "Failed to update orders status",
+                "data": orderIds
+            }
+        });
+    }
+});
+
+
 

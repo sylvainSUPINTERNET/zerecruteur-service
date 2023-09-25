@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma as dbClient } from "../prismaClient/prismaClientGenerated";
 
 
@@ -186,6 +187,28 @@ export const computeOrdersTotalAmount = async (reqObj:any) : Promise< string | n
 
         // TODO better logger !!!
         console.log(error)
+        return null;
+    }
+}
+
+export const updateOrdersStatus = async (reqObj:any) => {
+    const ids  = reqObj.req.body.orderIds as number[];
+
+    try {
+
+        const result = await dbClient.$queryRaw`
+        UPDATE "Order"
+            SET status = CASE
+            WHEN status = 'pending' THEN 'shipped'
+            WHEN status = 'shipped' THEN 'pending'
+            ELSE status
+            END
+            WHERE id IN (${Prisma.join(ids)});
+        `
+        return result;
+
+    } catch ( e ) {
+        console.log(e);
         return null;
     }
 }
