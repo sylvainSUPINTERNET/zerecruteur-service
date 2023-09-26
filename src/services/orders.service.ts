@@ -1,5 +1,8 @@
 import { Prisma } from "@prisma/client";
 import { prisma as dbClient } from "../prismaClient/prismaClientGenerated";
+import { loadStripe } from "../configuration/firebaseConfig";
+import Stripe from "stripe";
+const stripe = loadStripe();
 
 
 interface OrderTotal {
@@ -26,7 +29,9 @@ interface Order {
     phoneNumber: string;
     buyerEmail: string;
     productname: string;
-    status: "pending" | "shipped"
+    status: "pending" | "shipped";
+    refund: boolean;
+    paymentIntentId: string;
 }
 
 
@@ -106,6 +111,8 @@ export const ordersList = async (reqObj:any, offset:number, size:number) => {
             "Order"."phoneNumber",
             "Order"."buyerEmail",
             "Order"."status",
+            "Order"."refund",
+            "Order"."paymentIntentId",
             RelevantProducts.name AS productName -- ajout du nom du produit ici
         FROM "ProductOrder"
         JOIN "Order" ON "Order".id = "ProductOrder"."orderId"
@@ -181,7 +188,13 @@ export const computeOrdersTotalAmount = async (reqObj:any) : Promise< string | n
 
     try {
         const factor:number = parseFloat("100");
-        const val:number = parseFloat(BigInt(result[0].totalraw).toString());
+
+        let val: number = 0;
+
+        if ( result[0].totalraw !== null ) {
+            val = parseFloat(BigInt(result[0].totalraw).toString());
+        }
+ 
         return (val / factor).toString();
     } catch (error) {
 
@@ -211,4 +224,51 @@ export const updateOrdersStatus = async (reqObj:any) => {
         console.log(e);
         return null;
     }
+}
+
+export const refundOrder = async ( reqObj:any ) => {
+
+    const paymentId:string  = reqObj.req.body.paymentIntentId as string;
+
+    try {
+        const pi:Stripe.PaymentIntent= await stripe.paymentIntents.retrieve(paymentId);
+
+        if ( !pi || pi === null ) {
+            return null;
+        }
+
+        if ( pi.latest_charge === null ) {
+            return null;
+        }
+
+        const ch:Stripe.Charge = await stripe.charges.retrieve(pi.latest_charge?.toString() as string);
+
+        if ( !ch || ch === null ) {
+            return null;
+        }
+
+        const refund = await stripe.refunds.create({
+            charge: ch.id,
+            amount: ch.amount,
+        });
+
+        if ( !refund || refund === null ) {
+            return null;
+        }
+
+        const result = await dbClient.order.update({
+            where: {
+                paymentIntentId: paymentId
+            },
+            data: {
+                refund: true
+            }
+        })
+        return result;
+
+    } catch ( e ) {
+        console.log(e);
+        return null;
+    }
+
 }

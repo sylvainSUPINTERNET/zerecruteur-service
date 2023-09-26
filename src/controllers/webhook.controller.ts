@@ -19,6 +19,8 @@ webhookController.post('/', async ( req:Request, res:Response, _next:NextFunctio
         switch ( event.type ) {
             case 'charge.succeeded':
                 const chargeData:any = event.data.object;
+
+                console.log("CHARGE SUCCEEDED", chargeData);
                 //const pi:any = (await stripe.charges.retrieve(chargeData.id)).payment_intent;
                 ///const paymentIntent = await stripe.paymentIntents.retrieve(pi);
                 
@@ -108,7 +110,8 @@ webhookController.post('/', async ( req:Request, res:Response, _next:NextFunctio
                                             shippingState: state || "",
                                             shippingPostalCode: postal_code,
                                             phoneNumber: phone || "",
-                                            buyerEmail: buyerEmail
+                                            buyerEmail: buyerEmail,
+                                            paymentIntentId: sessionData.payment_intent
                                     }
                                 });
 

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { computeOrdersTotalAmount, ordersCount, ordersList, updateOrdersStatus } from "../services/orders.service";
+import { computeOrdersTotalAmount, ordersCount, ordersList, refundOrder, updateOrdersStatus } from "../services/orders.service";
 
 export const orderController = Router();
 
@@ -115,6 +115,50 @@ orderController.put('/orders', async ( req, res, _next ) => {
             }
         });
     }
+});
+
+orderController.put('/orders/refund', async ( req, res, _next ) => {
+
+    const paymentIntentId = req.body.paymentIntentId;
+
+    if ( !paymentIntentId || paymentIntentId == "") {
+        return res.status(400).json({
+            "response": {
+                "message": "Payment intent id not valid",
+                "data": paymentIntentId
+            }
+
+        });
+    }
+
+    try {
+        const result = await refundOrder({req,res});
+
+        if ( result === null ) {
+            return res.status(400).json({
+                "response": {
+                    "message": "Failed to refund order",
+                    "data": paymentIntentId
+                }
+            });
+        }
+        
+        return res.status(200).json({
+            "response": {
+                "message": "Order refunded successfully",
+                "data": paymentIntentId
+            }
+        });
+
+    } catch ( e ) {
+        return res.status(400).json({
+            "response": {
+                "message": "Failed to refund order",
+                "data": paymentIntentId
+            }
+        });
+    }
+
 });
 
 

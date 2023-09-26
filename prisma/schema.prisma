@@ -69,6 +69,8 @@ model Order {
   phoneNumber String?
   buyerEmail String
   status String @default("pending")
+  refund Boolean @default(false)
+  paymentIntentId String @unique
 }
 
 model ProductOrder {
