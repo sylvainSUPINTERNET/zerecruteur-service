@@ -33,6 +33,8 @@ export const productByPaymentLinkIdentifier = async (reqObj:any) => {
 export const addProduct = async (reqObj:any) => {
     const stripe = loadStripe();
 
+    console.log("xxxx",reqObj.req.body.countriesShipping)
+
     reqObj.req.body.price = reqObj.req.body.price * 100;
 
     const product = await stripe.products.create({
@@ -72,7 +74,7 @@ export const addProduct = async (reqObj:any) => {
 
         // TODO ?
         shipping_address_collection : {
-            allowed_countries: ['FR', 'DE', 'IT', 'ES', 'GB']
+            allowed_countries: reqObj.req.body.countriesShipping //['FR', 'DE', 'IT', 'ES', 'GB']
         },
         phone_number_collection : {
             enabled: true
@@ -110,7 +112,8 @@ export const addProduct = async (reqObj:any) => {
                     identifier: uuidv4(),
                     iban: reqObj.req.body.iban,
                     paymentUrl: paymentLink.url,
-                    stripeId: paymentLink.id
+                    stripeId: paymentLink.id,
+                    name: reqObj.req.body.linkName
                 }
         });
 

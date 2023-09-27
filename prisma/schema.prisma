@@ -28,6 +28,7 @@ model PaymentLink {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   active String @default("active") // active, inactive, deleted
+  name String
 }
 
 model Product {
