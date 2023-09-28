@@ -33,8 +33,6 @@ export const productByPaymentLinkIdentifier = async (reqObj:any) => {
 export const addProduct = async (reqObj:any) => {
     const stripe = loadStripe();
 
-    console.log("xxxx",reqObj.req.body.countriesShipping)
-
     reqObj.req.body.price = reqObj.req.body.price * 100;
 
     const product = await stripe.products.create({
@@ -42,8 +40,8 @@ export const addProduct = async (reqObj:any) => {
         description: reqObj.req.body.description,
         images: reqObj.req.body.images,
         metadata: {
-            category: reqObj.req.body.category,
-            subcategory: reqObj.req.body.subcategory,
+            // category: reqObj.req.body.category,
+            // subcategory: reqObj.req.body.subcategory,
             price: reqObj.req.body.price,
             currency: reqObj.req.body.currency,
         }
