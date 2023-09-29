@@ -17,3 +17,17 @@
  npx prisma db seed
 
 ````
+
+
+# setup
+
+```` bash 
+# apply migration 
+
+npx prisma migrate dev # usefull after pull
+
+# generate client
+
+npx prisma generate # generate or regenerate client after pull
+
+````
