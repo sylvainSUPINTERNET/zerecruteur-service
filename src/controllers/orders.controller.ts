@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { computeOrdersTotalAmount, ordersCount, ordersList, refundOrder, updateOrdersStatus } from "../services/orders.service";
+import { logger } from "../configuration/logger";
 
 export const orderController = Router();
 
@@ -7,90 +8,128 @@ export const orderController = Router();
 
 orderController.get('/orders', async ( req, res, _next ) => {
 
-    const specificPaymentLinkId = req.query.paymentLink;
-    let offset = req.query.offset || 0;
-    let size = req.query.size || 10;
-
     try {
-        offset = parseInt(offset as string);
-        size = parseInt(size as string);
-    } catch ( e ) {
-        offset = 0;
-        size = 10;
-    }
+        const specificPaymentLinkId = req.query.paymentLink;
+        let offset = req.query.offset || 0;
+        let size = req.query.size || 10;
     
-    if ( !specificPaymentLinkId ||  specificPaymentLinkId == "") {
-        return res.status(400).json({
+        try {
+            offset = parseInt(offset as string);
+            size = parseInt(size as string);
+        } catch ( e ) {
+            offset = 0;
+            size = 10;
+        }
+        
+        if ( !specificPaymentLinkId ||  specificPaymentLinkId == "") {
+            return res.status(400).json({
+                "response": {
+                    "message": "Payment link not valid",
+                    "data": []
+                }
+            });
+        }
+    
+        return res.status(200).json({
             "response": {
-                "message": "Payment link not valid",
-                "data": []
+                "message": "Orders list returns successfully",
+                "data": await ordersList({req,res}, offset, size)
+            }
+        });
+
+
+    } catch ( e ) {
+        logger.error(e);
+
+        return res.status(500).json({
+            "response": {
+                "message": "Internal server error",
+                "data": null
             }
         });
     }
 
-    return res.status(200).json({
-        "response": {
-            "message": "Orders list returns successfully",
-            "data": await ordersList({req,res}, offset, size)
-        }
-    });
     
 });
 
 orderController.get('/orders/count', async ( req, res, _next ) => {
     
-    const specificPaymentLinkId = req.query.paymentLink;
+    try {
+        const specificPaymentLinkId = req.query.paymentLink;
 
-    if ( !specificPaymentLinkId ||  specificPaymentLinkId == "") {
-        return res.status(400).json({
+        if ( !specificPaymentLinkId ||  specificPaymentLinkId == "") {
+            return res.status(400).json({
+                "response": {
+                    "message": "Payment link not valid",
+                    "data": []
+                }
+            });
+        }
+        
+        return res.status(200).json({
             "response": {
-                "message": "Payment link not valid",
-                "data": []
+                "message": "Count returns successfully",
+                "data": await ordersCount({req,res})
+            }
+        });
+    } catch ( e ) {
+        logger.error(e);
+
+        return res.status(500).json({
+            "response": {
+                "message": "Internal server error",
+                "data": null
             }
         });
     }
-    
-    return res.status(200).json({
-        "response": {
-            "message": "Count returns successfully",
-            "data": await ordersCount({req,res})
-        }
-    });
+
 
 });
 
 orderController.get('/orders/total', async ( req, res, _next ) => {
 
-    const specificPaymentLinkId = req.query.paymentLink;
+    try {
+        const specificPaymentLinkId = req.query.paymentLink;
 
-    if ( !specificPaymentLinkId ||  specificPaymentLinkId == "") {
-        return res.status(400).json({
-            "response": {
-                "message": "Payment link not valid",
-                "data": []
-            }
-        });
-    }
-    
-    const totalRawResult = await computeOrdersTotalAmount({req,res});
-    
-    if ( totalRawResult == null ) {
-        return res.status(400).json({
-            "response": {
-                "message": "Failed to compute total amount",
-                "data": ""
-            }  
-        });
+        if ( !specificPaymentLinkId ||  specificPaymentLinkId == "") {
+            return res.status(400).json({
+                "response": {
+                    "message": "Payment link not valid",
+                    "data": []
+                }
+            });
+        }
         
-    } else {
-        return res.status(200).json({
+        const totalRawResult = await computeOrdersTotalAmount({req,res});
+        
+        if ( totalRawResult == null ) {
+            return res.status(400).json({
+                "response": {
+                    "message": "Failed to compute total amount",
+                    "data": ""
+                }  
+            });
+            
+        } else {
+            return res.status(200).json({
+                "response": {
+                    "message": "Total amount computed successfully",
+                    "data": totalRawResult
+                }
+            });
+        
+        }
+    } catch ( e ) {
+        logger.error(e);
+
+        return res.status(500).json({
             "response": {
-                "message": "Total amount computed successfully",
-                "data": totalRawResult
+                "message": "Internal server error",
+                "data": null
             }
         });
-    
     }
+
 });
 
 orderController.put('/orders', async ( req, res, _next ) => {
@@ -108,6 +147,8 @@ orderController.put('/orders', async ( req, res, _next ) => {
         });
 
     } catch ( e ) {
+        logger.error(e);
+
         return res.status(400).json({   
             "response": {
                 "message": "Failed to update orders status",
@@ -151,6 +192,8 @@ orderController.put('/orders/refund', async ( req, res, _next ) => {
         });
 
     } catch ( e ) {
+        logger.error(e);
+        
         return res.status(400).json({
             "response": {
                 "message": "Failed to refund order",

@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { loadStripe } from "../configuration/firebaseConfig";
 import { prisma as clientDb } from "../prismaClient/prismaClientGenerated";
+import { logger } from "../configuration/logger";
 const stripe = loadStripe();
 
 export const webhookController = Router();
@@ -157,6 +158,7 @@ webhookController.post('/', async ( req:Request, res:Response, _next:NextFunctio
         });
 
       } catch (err:any) {
+        logger.error(err);
 
         return res.status(400).send(`Webhook Error: ${err.message}`);
 
