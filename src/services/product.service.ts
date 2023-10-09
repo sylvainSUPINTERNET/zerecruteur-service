@@ -91,7 +91,7 @@ export const addProduct = async (reqObj:any) => {
     });
 
 
-    //TODO use real oauth2 user 
+    // TODO use real oauth2 user 
     const user = await dbClient.user.findUnique({
         where : {
             email : "email@email.com"
@@ -140,14 +140,6 @@ export const addProduct = async (reqObj:any) => {
                 priceStripeId: price.id
             }
         });
-        console.log("save price to DB")
     }
-
-    console.log("payment link", paymentLink.url);
-    console.log("product " , product.id);
-    console.log("price ", price.id)
-
-
-
     return product;
 }

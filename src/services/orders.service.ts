@@ -199,7 +199,6 @@ export const computeOrdersTotalAmount = async (reqObj:any) : Promise< string | n
     } catch (error) {
 
         // TODO better logger !!!
-        console.log(error)
         return null;
     }
 }
@@ -221,7 +220,6 @@ export const updateOrdersStatus = async (reqObj:any) => {
         return result;
 
     } catch ( e ) {
-        console.log(e);
         return null;
     }
 }
@@ -267,7 +265,6 @@ export const refundOrder = async ( reqObj:any ) => {
         return result;
 
     } catch ( e ) {
-        console.log(e);
         return null;
     }
 
