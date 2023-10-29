@@ -10,17 +10,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id Int @id @default(autoincrement())
-  paymentLinks PaymentLink[]
-  email String @unique
-  createdAt DateTime @default(now())
-}
+// model User {
+//   id Int @id @default(autoincrement())
+//   paymentLinks PaymentLink[]
+//   email String @unique
+//   createdAt DateTime @default(now())
+// }
 
 model PaymentLink {
-  user User @relation(fields: [userId], references: [id])
+  // user User @relation(fields: [userId], references: [id])
   identifier String @unique
-  userId Int
+  // userId Int
   products Product[]
   iban String
   stripeId String
@@ -29,6 +29,7 @@ model PaymentLink {
   createdAt DateTime @default(now())
   active String @default("active") // active, inactive, deleted
   name String
+  email String
 }
 
 model Product {

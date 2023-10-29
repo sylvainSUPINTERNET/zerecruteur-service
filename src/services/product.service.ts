@@ -94,21 +94,22 @@ export const addProduct = async (reqObj:any) => {
 
 
     // Using OAuth2
-    const user = await dbClient.user.findUnique({
-        where : {
-            email : reqObj.req.body.email
-        }
-    });
+    // const user = await dbClient.user.findUnique({
+    //     where : {
+    //         email : reqObj.req.body.email
+    //     }
+    // });
 
-    if ( user ) {
+    if ( reqObj.req.body.email ) {
         
         const paymentLinkDb = await dbClient.paymentLink.create({
                 data : {
-                    user : {
-                        connect : {
-                            id : user.id
-                        }
-                    },
+                    // user : {
+                    //     connect : {
+                    //         id : user.id
+                    //     }
+                    // },
+                    email: reqObj.req.body.email,
                     identifier: uuidv4(),
                     iban: reqObj.req.body.iban,
                     paymentUrl: paymentLink.url,
