@@ -22,6 +22,12 @@ app.use(cors({
 // can't use body parser due to stripe webhook using raw body ! ( tested with verify method, is not working !)
 
 app.use(cookieParser());
+
+app.get('/health' , ( req, res ) => {
+   res.status(200).send("HEALTHY"); 
+});
+
+
 app.use('/api', express.json(), productController )
 app.use('/api', express.json(), paymentLinkController )
 app.use('/api', express.json(), orderController )
