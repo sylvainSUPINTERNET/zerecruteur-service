@@ -15,7 +15,7 @@ const app = express();
 const webhookEndpoint = "/webhook";
 
 app.use(cors({
-    origin: 'http://localhost:3000', // TODO : Change this to the actual domain
+    origin: ['http://localhost:3000', 'https://selflink.fr'],
     credentials: true
 }));
 
