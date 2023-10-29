@@ -56,7 +56,8 @@ export const addProduct = async (reqObj:any) => {
 
 
     // TODO use real email
-    const mockEmail = "sylvain.jolyxxx@gmail.coim"
+    // const mockEmail = "sylvain.jolyxxx@gmail.coim"
+
     const paymentLink = await stripe.paymentLinks.create({
         line_items: [
             {
@@ -85,16 +86,17 @@ export const addProduct = async (reqObj:any) => {
             type: 'hosted_confirmation',
             hosted_confirmation : {
                 // TODO use real email
-                custom_message: `Thank you for your order! We will email you with updates about your delivery ${mockEmail}`
+                // custom_message: `Thank you for your order! We will email you with updates about your delivery ${mockEmail}`
+                custom_message: `Thank you for your order !`
             }
         }
     });
 
 
-    // TODO use real oauth2 user 
+    // Using OAuth2
     const user = await dbClient.user.findUnique({
         where : {
-            email : "email@email.com"
+            email : reqObj.req.body.email
         }
     });
 
