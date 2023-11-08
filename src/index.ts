@@ -38,6 +38,11 @@ const middlewareDetectBaconPixelOpen = (req:Request, res:Response, next:NextFunc
             console.log("decoding token for email ...")
             const email = jwt.verify(tokenEmail, process.env.BACON_PIXEl_TOKEN_SECRET as string);
             console.log("email decoded (email open): ", email);
+
+            // TODO save en DB les emails:
+            // - email envoyé 
+            // - email ouvert => update
+
         } catch ( e ) {
             console.log("Fail to open token for email : ", e);
         }
