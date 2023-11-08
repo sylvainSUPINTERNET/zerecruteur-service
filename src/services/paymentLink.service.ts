@@ -7,7 +7,7 @@ export const getPaymentLinks = async (reqObj:any) : Promise<any[]> => {
 
     const userPaymentLinks = await dbClient.paymentLink.findMany({
         where: {
-            email
+            email: email
         },
         select: {
             id: true,

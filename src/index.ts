@@ -8,6 +8,7 @@ import { productController } from './controllers/product.controller';
 import { webhookController } from './controllers/webhook.controller';
 import { paymentLinkController } from './controllers/paymentLink.controller';
 import { orderController } from './controllers/orders.controller';
+import path from 'path';
 
 const PORT:number = 9000;
 const app = express();
@@ -27,6 +28,7 @@ app.get('/health' , ( req, res ) => {
    res.status(200).send("HEALTHY"); 
 });
 
+app.use('/static', express.static(path.join(__dirname, 'public')))
 
 app.use('/api', express.json(), productController )
 app.use('/api', express.json(), paymentLinkController )

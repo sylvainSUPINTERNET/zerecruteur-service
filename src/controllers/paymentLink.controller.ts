@@ -11,7 +11,7 @@ paymentLinkController.post('/paymentLink', async ( req, res, _next ) => {
 
         return res.status(200).json({
             "response": {
-                "message": "Payment link added successfully",
+                "message": "Payment link listed successfully",
                 "data": userPaymentLinks
             }
         });
