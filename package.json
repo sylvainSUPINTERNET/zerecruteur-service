@@ -5,7 +5,7 @@
   "main": "./build/index.js",
   "scripts": {
     "build:dev": "tsc",
-    "build": "tsc && cp src/public/*.* build/",
+    "build": "tsc && cp -r src/public build/",
     "deploy": "npm i && npm i typescript -g && npm install @prisma/client && npx prisma generate && tsc",
     "dev": "npx ts-node src/index.ts",
     "start": "node build/index.js",
