@@ -40,6 +40,7 @@ const middlewareDetectBaconPixelOpen = (req:Request, res:Response, next:NextFunc
             console.log("email decoded (email open): ", email);
 
             // TODO save en DB les emails:
+            // ignore duplicate ?
             // - email envoyé 
             // - email ouvert => update
 
